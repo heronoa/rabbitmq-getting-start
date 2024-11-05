@@ -1,6 +1,7 @@
-const amqp = require("amqplib");
-const Router = require("express").Router;
 const dotenv = require("dotenv");
+const amqp = require("amqplib");
+
+const Router = require("express").Router;
 
 const Product = require("../models/Product");
 
@@ -17,7 +18,11 @@ async function connectToRabbitMQ() {
   await channel.assertQueue(process.env.PRODUCT_QUEUE_NAME);
 }
 
-connectToRabbitMQ();
+connectToRabbitMQ()
+  .then(() => {
+    console.log("Product-Service Connected to RabbitMQ");
+  })
+  .catch((error) => console.log(`RabbitMQ Connect Error: ${error}`));
 
 router.post("/", async (req, res) => {
   const {
@@ -33,7 +38,7 @@ router.post("/", async (req, res) => {
     });
   }
 
-  const product = await new Product({
+  const product = new Product({
     ...req.body,
   });
 

@@ -25,6 +25,6 @@ mongoose
   })
   .catch((error) => console.log(`Mongoose Connect Error: ${error}`));
 
-app.listen(process.env.PORT || 3333, () => {
-  console.log(`Product-Service listening to port ${process.env.PORT || 3333}`);
+app.listen(process.env.PORT || 3001, () => {
+  console.log(`Product-Service listening to port ${process.env.PORT || 3001}`);
 });
