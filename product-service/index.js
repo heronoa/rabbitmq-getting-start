@@ -16,6 +16,8 @@ app.get("/", (req, res) => {
   res.status(200).json({ msg: "Hello World" });
 });
 
+app.use("/products", productsRouter);
+
 mongoose
   .connect(process.env.MONGODB_URL)
   .then(() => {
