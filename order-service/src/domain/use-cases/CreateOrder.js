@@ -1,15 +1,24 @@
-CreateOrder = (products) => {
-  let total = 0;
-  products.forEach((product) => {
-    total += product.price;
-  });
+// use-cases/CreateOrder.js
+const Order = require("../entities/Order");
 
-  const order = new Order({
-    products,
-    total,
-  });
-  order.save();
-  return order;
-};
+class CreateOrder {
+  static async execute(products, total) {
+    if (total <= 0) {
+      throw new Error("Quantity must be greater than 0");
+    }
+    if (products.length <= 0) {
+      throw new Error("Must send at least one product");
+    }
+
+    const newOrder = new Order({
+      products,
+      total,
+    });
+
+    const savedOrder = await newOrder.save();
+
+    return savedOrder;
+  }
+}
 
 module.exports = CreateOrder;

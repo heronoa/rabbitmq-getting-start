@@ -1,38 +1,49 @@
+require("dotenv").config();
+
 const express = require("express");
-const dotenv = require("dotenv");
-
-const startMongoDb = require("./infrastructure/database/mongodb");
-const RabbitMQClient = require("./infrastructure/messaging/RabbitMQClient");
-
-const CreateOrder = require("./domain/use-cases/CreateOrder");
-
-dotenv.config();
+const database = require("./infrastructure/database");
+const RabbitMQClient = require("./infrastructure/messaging/RabbitMQClient"); // Exemplo de integração opcional
+const orderRoutes = require("./adapters/presenters/routes/OrderRoutes"); // Exemplo de rotas de pedidos
+const ErrorHandler = require("./adapters/presenters/middlewares/errorHandler"); // Middleware de tratamento de erros
 
 const app = express();
-const PORT = process.env.PORT || 3002;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
-await startMongoDb();
+async function startServer() {
+  try {
+    await database.connect();
 
-// RabbitMQ connection
-await RabbitMQClient.connect(process.env.RABBITMQ_URL);
-
-await RabbitMQClient.consumeFromQueue(
-  process.env.ORDER_QUEUE_NAME,
-  (data, client) => {
-    // order service queue listens to this queue
-    const { products } = JSON.parse(data.content);
-    const newOrder = CreateOrder(products);
-
-    client._channel.sendToQueue(
-      process.env.PRODUCT_QUEUE_NAME,
-      Buffer.from(JSON.stringify(newOrder))
+    await RabbitMQClient.connect(
+      process.env.RABBITMQ_URL || "amqp://localhost"
     );
-  }
-);
 
-app.listen(PORT, () => {
-  console.log(`Order-Service listening on port ${PORT}`);
+    app.use(ErrorHandler.handleError);
+    app.use("/orders", orderRoutes);
+
+    app.use("/", (req, res) => {
+      res.status(200).json({ hello: "world" });
+    });
+
+    // Inicia o servidor
+    app.listen(PORT, () => {
+      console.log(`Server is running on port ${PORT}`);
+    });
+  } catch (error) {
+    console.error("Failed to start server:", error);
+    process.exit(1);
+  }
+}
+
+startServer();
+
+process.on("SIGINT", async () => {
+  console.log("SIGINT signal received: closing server");
+  await database.disconnect();
+  await RabbitMQClient.close();
+  process.exit(0);
 });
+
+module.exports = {app, startServer};

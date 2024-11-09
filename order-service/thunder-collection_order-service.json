@@ -1,0 +1,52 @@
+{
+    "clientName": "Thunder Client",
+    "collectionName": "Order-Service",
+    "collectionId": "e154a10a-3362-4789-921d-dd0e6908ab26",
+    "dateExported": "2024-11-09T18:49:46.144Z",
+    "version": "1.2",
+    "folders": [],
+    "requests": [
+        {
+            "_id": "527d47ef-99fd-4bae-9c22-017540ed16a8",
+            "colId": "e154a10a-3362-4789-921d-dd0e6908ab26",
+            "containerId": "",
+            "name": "Health Check",
+            "url": "http://localhost:3002",
+            "method": "GET",
+            "sortNum": 20000,
+            "created": "2024-11-05T02:14:54.202Z",
+            "modified": "2024-11-09T18:37:02.109Z",
+            "headers": []
+        },
+        {
+            "_id": "ecf13cf6-ab62-4223-9650-5fcecddcee9e",
+            "colId": "e154a10a-3362-4789-921d-dd0e6908ab26",
+            "containerId": "",
+            "name": "Create Order",
+            "url": "http://localhost:3002/orders",
+            "method": "POST",
+            "sortNum": 30000,
+            "created": "2024-11-09T18:40:21.514Z",
+            "modified": "2024-11-09T18:43:30.238Z",
+            "headers": [],
+            "body": {
+                "type": "json",
+                "raw": "{\n  \"products\": [\n    {\n      \"product_id\": \"1\"\n    },\n    {\n      \"product_id\": \"2\"\n    },\n    {\n      \"product_id\": \"3\"\n    },\n    {\n      \"product_id\": \"4\"\n    },\n    {\n      \"product_id\": \"5\"\n    }\n  ],\n  \"total\": 50\n}",
+                "form": []
+            }
+        },
+        {
+            "_id": "4e12de89-24ee-428e-ad5b-33d65170dbb9",
+            "colId": "e154a10a-3362-4789-921d-dd0e6908ab26",
+            "containerId": "",
+            "name": "Get All Orders",
+            "url": "http://localhost:3002/orders",
+            "method": "GET",
+            "sortNum": 40000,
+            "created": "2024-11-09T18:44:07.289Z",
+            "modified": "2024-11-09T18:44:22.292Z",
+            "headers": []
+        }
+    ],
+    "ref": "vEVAcvHCMFUiYS7lTR7-5V3DACWCYC-9sSSsNYTPhn9KHPpipYrC79gsKQrF6qCoRvHFaX0NW1VcbTZqkuQnzg"
+}
