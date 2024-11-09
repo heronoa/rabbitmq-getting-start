@@ -12,6 +12,7 @@ beforeAll(async () => {
     .catch((error) => {
       console.log(`Jest couldn't connect to mongodb  ${error}`);
     });
+  await Order.deleteMany();
 });
 
 afterAll(async () => {
