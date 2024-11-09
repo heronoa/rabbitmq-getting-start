@@ -8,7 +8,6 @@ dotenv.config({ path: "../.env.tests" });
 beforeAll(async () => {
   await mongoose
     .connect(
-      // "mongodb://root:example@0.0.0.0:27017/scan-product-service-test?retryWrites=true&writeConcern=majority&authSource=admin"
       process.env.MONGODB_URL
     )
     .then(() => {

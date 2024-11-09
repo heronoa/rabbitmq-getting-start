@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-const Order = require("../models/Order");
+const Order = require("../src/domain/entities/Order");
 
 dotenv.config({ path: "../.env.tests" });
 
