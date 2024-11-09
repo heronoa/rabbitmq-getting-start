@@ -11,6 +11,12 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(ErrorHandler.handleError);
+app.use("/orders", orderRoutes);
+
+app.use("/", (req, res) => {
+  res.status(200).json({ hello: "world" });
+});
 
 async function startServer() {
   try {
@@ -19,13 +25,6 @@ async function startServer() {
     await RabbitMQClient.connect(
       process.env.RABBITMQ_URL || "amqp://localhost"
     );
-
-    app.use(ErrorHandler.handleError);
-    app.use("/orders", orderRoutes);
-
-    app.use("/", (req, res) => {
-      res.status(200).json({ hello: "world" });
-    });
 
     // Inicia o servidor
     app.listen(PORT, () => {
@@ -46,4 +45,4 @@ process.on("SIGINT", async () => {
   process.exit(0);
 });
 
-module.exports = {app, startServer};
+module.exports = app;

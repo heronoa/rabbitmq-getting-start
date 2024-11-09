@@ -22,6 +22,14 @@ const cleanOrder = (order) => {
     products: cleanedProducts,
   };
 };
+const cleanProducts = (products) => {
+  const cleanedProducts = products.map((product) => {
+    const { _id, ...cleanedProduct } = product;
+    return cleanedProduct;
+  });
+
+  return cleanedProducts;
+};
 
 describe("Order Service - Integration Tests", () => {
   beforeAll(async () => {
@@ -50,14 +58,12 @@ describe("Order Service - Integration Tests", () => {
   });
 
   it("should list all orders", async () => {
-    // Cria alguns pedidos para o teste
     await Order.create(orderMocks);
 
     const response = await request(app).get("/orders").expect(200);
 
     const cleanedResponse = response.body.map((order) => cleanOrder(order));
 
-    // Verifica a resposta
     expect(cleanedResponse).toHaveLength(orderMocks.length);
     expect(cleanedResponse).toEqual(
       expect.arrayContaining([
@@ -67,36 +73,33 @@ describe("Order Service - Integration Tests", () => {
     );
   });
 
-  // it("should create an order successfully", async () => {
-  //   const response = await request(app)
-  //     .post("/orders")
-  //     .send(orderMocks[0])
-  //     .expect(201);
+  it("should create an order successfully", async () => {
+    const response = await request(app)
+      .post("/orders")
+      .send(orderMocks[0])
+      .expect(201);
 
-  //   // Verifica a resposta
-  //   expect(response.body).toMatchObject({
-  //     message: "Order created successfully",
-  //     order: {
-  //       products: orderData.products,
-  //       total: orderData.total,
-  //     },
-  //   });
+    expect(response.body).toMatchObject({
+      message: "Order created successfully",
+      order: {
+        products: orderMocks[0].products,
+        total: orderMocks[0].total,
+      },
+    });
 
-  //   // Verifica se o pedido foi salvo no banco de dados
-  //   const savedOrder = await Order.findById(response.body.id);
-  //   expect(savedOrder).not.toBeNull();
-  //   expect(savedOrder?.products).toBe(orderMocks[0].productId);
-  //   expect(savedOrder?.total).toBe(orderMocks[0].total);
+    const savedOrder = await Order.findById(response.body.order._id);
+    expect(savedOrder).not.toBeNull();
+    expect(savedOrder?.products).toMatchObject(orderMocks[0].products);
+    expect(savedOrder?.total).toBe(orderMocks[0].total);
 
-  //   // Verifica se a mensagem foi enviada para o RabbitMQ
-  //   const queueMessages = await RabbitMQClient.getMessagesFromQueue(
-  //     "orders_queue"
-  //   ); // Supondo que RabbitMQClient tenha um método para verificar mensagens
-  //   expect(queueMessages).toContainEqual(
-  //     expect.objectContaining({
-  //       action: "order_created",
-  //       orderId: response.body.id,
-  //     })
-  //   );
-  // });
+    // const queueMessages = await RabbitMQClient.getMessagesFromQueue(
+    //   "orders_queue"
+    // ); // Supondo que RabbitMQClient tenha um método para verificar mensagens
+    // expect(queueMessages).toContainEqual(
+    //   expect.objectContaining({
+    //     action: "order_created",
+    //     orderId: response.body.id,
+    //   })
+    // );
+  });
 });
