@@ -1,8 +1,6 @@
 const amqp = require("amqplib");
 const dotenv = require("dotenv");
 
-dotenv.config({ path: "../.env.tests" });
-
 describe("RabbitMQ Integration Test", () => {
   let connection;
   let channel;
