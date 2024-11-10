@@ -92,14 +92,27 @@ describe("Order Service - Integration Tests", () => {
     expect(savedOrder?.products).toMatchObject(orderMocks[0].products);
     expect(savedOrder?.total).toBe(orderMocks[0].total);
 
-    // const queueMessages = await RabbitMQClient.getMessagesFromQueue(
-    //   "orders_queue"
-    // ); // Supondo que RabbitMQClient tenha um método para verificar mensagens
-    // expect(queueMessages).toContainEqual(
-    //   expect.objectContaining({
-    //     action: "order_created",
-    //     orderId: response.body.id,
-    //   })
-    // );
+    await new Promise((resolve, reject) => {
+      RabbitMQClient.consumeFromQueue(
+        process.env.ORDER_QUEUE_NAME,
+        (message) => {
+          try {
+            // Verifica o conteúdo da mensagem
+            console.log("received message:", { message });
+
+            expect(message).toEqual(
+              expect.objectContaining({
+                status: "created",
+                orderId: response.body.order._id,
+              })
+            );
+
+            resolve();
+          } catch (error) {
+            reject(error);
+          }
+        }
+      );
+    });
   });
 });

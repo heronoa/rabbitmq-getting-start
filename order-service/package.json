@@ -6,8 +6,8 @@
   "scripts": {
     "start": "npm run test && node src/index.js",
     "dev": "node src/index.js",
-    "test": "jest --testTimeout=30000 --setupFiles ./jest.setup.js"
-  },
+    "test": "jest --testTimeout=30000 --setupFiles ./jest.setup.js --detectOpenHandles"
+  }, 
   "keywords": [],
   "author": "",
   "license": "ISC",

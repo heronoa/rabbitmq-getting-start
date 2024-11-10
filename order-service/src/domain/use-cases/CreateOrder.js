@@ -1,5 +1,9 @@
 // use-cases/CreateOrder.js
+const dotenv = require("dotenv");
 const Order = require("../entities/Order");
+const RabbitMQClient = require("../../infrastructure/messaging/RabbitMQClient");
+
+dotenv.config();
 
 class CreateOrder {
   static async execute(products, total) {
@@ -16,6 +20,12 @@ class CreateOrder {
     });
 
     const savedOrder = await newOrder.save();
+
+    await RabbitMQClient.sendToQueue(process.env.ORDER_QUEUE_NAME, {
+      orderId: savedOrder.id,
+      status: "created",
+      // Adicione quaisquer outros dados necessários
+    });
 
     return savedOrder;
   }

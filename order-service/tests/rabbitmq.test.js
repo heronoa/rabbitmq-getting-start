@@ -19,7 +19,7 @@ describe("RabbitMQ Integration Test", () => {
     await connection.close();
   });
 
-  test("envia e recebe uma mensagem no RabbitMQ", async () => {
+  test("It should send and receive RabbitMQ message", async () => {
     await channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
 
     const receivedMessage = await new Promise((resolve) => {
