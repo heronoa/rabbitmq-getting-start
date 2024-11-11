@@ -1,7 +1,4 @@
 const amqp = require("amqplib");
-const dotenv = require("dotenv");
-
-dotenv.config({ path: "../.env.tests" });
 
 describe("RabbitMQ Integration Test", () => {
   let connection;
@@ -21,7 +18,7 @@ describe("RabbitMQ Integration Test", () => {
     await connection.close();
   });
 
-  test("envia e recebe uma mensagem no RabbitMQ", async () => {
+  it("It should send and receive RabbitMQ message", async () => {
     await channel.sendToQueue(queue, Buffer.from(JSON.stringify(message)));
 
     const receivedMessage = await new Promise((resolve) => {

@@ -3,14 +3,9 @@ const dotenv = require("dotenv");
 
 const Product = require("../models/Product");
 
-dotenv.config({ path: "../.env.tests" });
-
 beforeAll(async () => {
   await mongoose
-    .connect(
-      // "mongodb://root:example@0.0.0.0:27017/scan-product-service-test?retryWrites=true&writeConcern=majority&authSource=admin"
-      process.env.MONGODB_URL
-    )
+    .connect(process.env.MONGODB_URL)
     .then(() => {
       console.log("Jest connected to mongodb");
     })

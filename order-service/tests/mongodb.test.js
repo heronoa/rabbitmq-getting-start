@@ -1,21 +1,18 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-const Order = require("../models/Order");
-
-dotenv.config({ path: "../.env.tests" });
+const Order = require("../src/domain/entities/Order");
 
 beforeAll(async () => {
   await mongoose
-    .connect(
-      process.env.MONGODB_URL
-    )
+    .connect(process.env.MONGODB_URL)
     .then(() => {
       console.log("Jest connected to mongodb");
     })
     .catch((error) => {
       console.log(`Jest couldn't connect to mongodb  ${error}`);
     });
+  await Order.deleteMany();
 });
 
 afterAll(async () => {
