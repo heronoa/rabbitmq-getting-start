@@ -7,8 +7,6 @@ const Order = require("../../src/domain/entities/Order");
 const Database = require("../../src/infrastructure/database");
 const RabbitMQClient = require("../../src/infrastructure/messaging/RabbitMQClient");
 
-let server;
-
 const cleanOrder = (order) => {
   const { _id, __v, createdAt, updatedAt, products, ...cleanedOrder } = order;
 
@@ -91,6 +89,36 @@ describe("Order Service - Integration Tests", () => {
     expect(savedOrder).not.toBeNull();
     expect(savedOrder?.products).toMatchObject(orderMocks[0].products);
     expect(savedOrder?.total).toBe(orderMocks[0].total);
+  });
+
+  it("should create a new order when a message is received from products queue", async () => {
+    // Envia uma mensagem para a fila products_queue
+    await RabbitMQClient.sendToQueue(
+      process.env.PRODUCT_QUEUE_NAME,
+      orderMocks[0]
+    );
+
+    // Aguarda a criação da ordem no banco de dados
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Ajuste o delay conforme necessário
+
+    // Verifica se a nova ordem foi criada no banco de dados
+    const createdOrder = await Order.findOne({ total: orderMocks[0].total });
+
+    expect(createdOrder).not.toBeNull();
+
+    const createdOrderProducts = createdOrder.products.map((product) =>
+      product.toObject()
+    );
+
+    expect(createdOrderProducts).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining(orderMocks[0].products[0]),
+        expect.objectContaining(orderMocks[0].products[0]),
+      ])
+    );
+    expect(createdOrder.total).toBe(orderMocks[0].total);
+
+    await new Promise((resolve) => setTimeout(resolve, 500)); // Ajuste o delay conforme necessário
 
     await new Promise((resolve, reject) => {
       RabbitMQClient.consumeFromQueue(
@@ -98,12 +126,10 @@ describe("Order Service - Integration Tests", () => {
         (message) => {
           try {
             // Verifica o conteúdo da mensagem
-            console.log("received message:", { message });
-
             expect(message).toEqual(
               expect.objectContaining({
                 status: "created",
-                orderId: response.body.order._id,
+                orderId: createdOrder._id.toString(),
               })
             );
 

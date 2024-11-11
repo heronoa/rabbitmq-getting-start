@@ -2,9 +2,10 @@ require("dotenv").config();
 
 const express = require("express");
 const database = require("./infrastructure/database");
-const RabbitMQClient = require("./infrastructure/messaging/RabbitMQClient"); // Exemplo de integração opcional
-const orderRoutes = require("./adapters/presenters/routes/OrderRoutes"); // Exemplo de rotas de pedidos
-const ErrorHandler = require("./adapters/presenters/middlewares/errorHandler"); // Middleware de tratamento de erros
+const RabbitMQClient = require("./infrastructure/messaging/RabbitMQClient");
+const ErrorHandler = require("./adapters/presenters/middlewares/errorHandler");
+const orderRoutes = require("./adapters/presenters/routes/OrderRoutes");
+const productConsumer = require("./infrastructure/messaging/ProductConsumer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +26,8 @@ async function startServer() {
     await RabbitMQClient.connect(
       process.env.RABBITMQ_URL || "amqp://localhost"
     );
+
+    await productConsumer.start();
 
     // Inicia o servidor
     app.listen(PORT, () => {

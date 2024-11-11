@@ -5,7 +5,7 @@ const RabbitMQClient = require("../../infrastructure/messaging/RabbitMQClient");
 
 dotenv.config();
 
-class CreateOrder {
+class CreateOrderAndSendMsg {
   static async execute(products, total) {
     if (total <= 0) {
       throw new Error("Quantity must be greater than 0");
@@ -21,8 +21,16 @@ class CreateOrder {
 
     const savedOrder = await newOrder.save();
 
+
+    
+    await RabbitMQClient.sendToQueue(process.env.ORDER_QUEUE_NAME, {
+      orderId: savedOrder.id,
+      status: "created",
+      // Adicione quaisquer outros dados necessários
+    });
+
     return savedOrder;
   }
 }
 
-module.exports = CreateOrder;
+module.exports = CreateOrderAndSendMsg;

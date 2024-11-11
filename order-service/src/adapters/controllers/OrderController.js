@@ -4,7 +4,7 @@ const OrderService = require("../../domain/services/OrderServices"); // Camada d
 exports.createOrder = async (req, res) => {
   try {
     const { products, total } = req.body;
-    console.log({ products, total });
+    // console.log({ products, total });
     const newOrder = await OrderService.createOrder(products, total);
 
     res.status(201).json({
