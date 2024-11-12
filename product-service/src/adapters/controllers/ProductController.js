@@ -1,5 +1,22 @@
 const ProductService = require("../../domain/services/ProductService");
 
+exports.buyProducts = async (req, res) => {
+  try {
+    const { products } = req.body;
+    const newOrder = await ProductService.buyProducts(products);
+
+    res.status(201).json({
+      message: "Products Order sended to buy successfully",
+      product: newOrder,
+    });
+  } catch (error) {
+    console.error("Controller error creating product:", error);
+    res.status(500).json({
+      error: "Failed to create product",
+    });
+  }
+};
+
 exports.createProduct = async (req, res) => {
   try {
     const { name, price, description, quantity } = req.body;

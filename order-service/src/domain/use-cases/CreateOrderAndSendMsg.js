@@ -21,10 +21,9 @@ class CreateOrderAndSendMsg {
 
     const savedOrder = await newOrder.save();
 
-
-    
     await RabbitMQClient.sendToQueue(process.env.PRODUCT_QUEUE_NAME, {
       orderId: savedOrder.id,
+      products,
       status: "created",
       // Adicione quaisquer outros dados necessários
     });

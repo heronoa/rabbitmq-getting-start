@@ -1,10 +1,19 @@
-// services/productService.js
 const createProduct = require("../use-cases/CreateProduct");
 const getProduct = require("../use-cases/GetProduct");
 const deleteProduct = require("../use-cases/DeleteProduct");
 const updateProduct = require("../use-cases/UpdateProduct");
+const buyProducts = require("../use-cases/BuyProducts");
 
-// Criar um novo pedido
+exports.buyProducts = async (products) => {
+  try {
+    const order = await buyProducts.execute(products);
+
+    return order;
+  } catch (error) {
+    throw new Error("Service error creating product");
+  }
+};
+
 exports.createProduct = async ({ name, price, description, quantity }) => {
   try {
     const newProduct = await createProduct.execute({
@@ -20,7 +29,6 @@ exports.createProduct = async ({ name, price, description, quantity }) => {
   }
 };
 
-// Listar todos os pedidos
 exports.getProducts = async () => {
   try {
     return await getProduct.all();
@@ -29,7 +37,6 @@ exports.getProducts = async () => {
   }
 };
 
-// Buscar um pedido por ID
 exports.getProductById = async (productId) => {
   try {
     return await getProduct.byId(productId);
@@ -38,7 +45,6 @@ exports.getProductById = async (productId) => {
   }
 };
 
-// Atualizar um pedido
 exports.updateProduct = async (productId, productUpdated) => {
   try {
     const {
@@ -61,7 +67,6 @@ exports.updateProduct = async (productId, productUpdated) => {
   }
 };
 
-// Deletar um pedido
 exports.deleteProduct = async (productId) => {
   try {
     const product = await deleteProduct.execute(productId);
