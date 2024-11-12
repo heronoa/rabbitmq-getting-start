@@ -8,6 +8,7 @@ class ProductConsumer {
       async (message) => {
         try {
           const { products } = message;
+          console.log({ message, products });
           const productIdCounts = products
             .map((p) => p.product_id)
             .reduce((acc, id) => {

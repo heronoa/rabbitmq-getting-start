@@ -6,7 +6,7 @@ dotenv.config({ path: "../.env.tests" });
 describe("RabbitMQ Integration Test", () => {
   let connection;
   let channel;
-  const queue = process.env.PRODUCT_QUEUE_NAME;
+  const queue = "connection-test-queue";
   const message = { text: "Hello, RabbitMQ!" };
 
   beforeAll(async () => {

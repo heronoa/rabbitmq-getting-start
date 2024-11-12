@@ -6,7 +6,8 @@
   "scripts": {
     "start": "npm run test && node index.js",
     "dev": "nodemon src/index.js",
-    "test": "jest --testTimeout=30000 --setupFiles ./jest.setup.js"
+    "test": "jest --testTimeout=30000 --setupFiles ./jest.setup.js",
+    "test:integration": "jest tests/integration --testTimeout=30000 --setupFiles ./jest.setup.js"
   },
   "keywords": [],
   "author": "",

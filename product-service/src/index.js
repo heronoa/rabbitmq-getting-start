@@ -3,8 +3,10 @@ require("dotenv").config();
 const express = require("express");
 const database = require("./infrastructure/database");
 const RabbitMQClient = require("./infrastructure/messaging/RabbitMQClient");
+const productConsumer = require("./infrastructure/messaging/ProductConsumer");
 const ErrorHandler = require("./adapters/presenters/middlewares/errorHandler");
 const productRoutes = require("./adapters/presenters/routes/ProductRoutes");
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -25,6 +27,8 @@ async function startServer() {
     await RabbitMQClient.connect(
       process.env.RABBITMQ_URL || "amqp://localhost"
     );
+
+    await productConsumer.start();
 
     // Inicia o servidor
     app.listen(PORT, () => {

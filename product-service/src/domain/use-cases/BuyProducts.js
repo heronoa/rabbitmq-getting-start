@@ -16,10 +16,10 @@ class BuyProducts {
 
     const order = products.reduce(
       (resultedOrder, item) => {
-        resultedOrder.products.push({ product_id: item.id });
+        resultedOrder.products.push({ product_id: item._id });
         resultedOrder.total += item.price;
 
-        return resultado;
+        return resultedOrder;
       },
       { products: [], total: 0 }
     );
