@@ -10,6 +10,7 @@ const ProductSchema = new Schema(
     },
     price: { type: Number, required: true },
     description: { type: String, required: true },
+    quantity: { type: Number, required: false, default: 0 },
   },
   { timestamps: true }
 );
