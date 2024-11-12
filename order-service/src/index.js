@@ -5,7 +5,7 @@ const database = require("./infrastructure/database");
 const RabbitMQClient = require("./infrastructure/messaging/RabbitMQClient");
 const ErrorHandler = require("./adapters/presenters/middlewares/errorHandler");
 const orderRoutes = require("./adapters/presenters/routes/OrderRoutes");
-const productConsumer = require("./infrastructure/messaging/ProductConsumer");
+const orderConsumer = require("./infrastructure/messaging/OrderConsumer");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -27,7 +27,7 @@ async function startServer() {
       process.env.RABBITMQ_URL || "amqp://localhost"
     );
 
-    await productConsumer.start();
+    await orderConsumer.start();
 
     // Inicia o servidor
     app.listen(PORT, () => {
