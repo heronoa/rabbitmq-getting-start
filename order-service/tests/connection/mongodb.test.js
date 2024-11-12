@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv");
 
-const Order = require("../src/domain/entities/Order");
+const Order = require("../../src/domain/entities/Order");
 
 beforeAll(async () => {
   await mongoose

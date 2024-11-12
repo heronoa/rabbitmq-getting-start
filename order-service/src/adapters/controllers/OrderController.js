@@ -55,12 +55,12 @@ exports.getOrderById = async (req, res) => {
 exports.updateOrder = async (req, res) => {
   try {
     const orderId = req.params.id;
-    const { productId, quantity } = req.body;
+    const { products = undefined, total = undefined } = req.body;
 
     const updatedOrder = await OrderService.updateOrder(
       orderId,
-      productId,
-      quantity
+      products,
+      total
     );
 
     if (!updatedOrder) {

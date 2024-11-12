@@ -11,16 +11,6 @@ class DeleteOrder {
 
     return orders;
   }
-
-  static async byId(orderId) {
-    const order = await Order.findById(orderId);
-
-    if (!order) {
-      throw new Error("Order not found");
-    }
-
-    return order;
-  }
 }
 
 module.exports = DeleteOrder;
