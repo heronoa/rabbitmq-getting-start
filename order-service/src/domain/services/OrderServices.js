@@ -27,7 +27,7 @@ exports.getOrders = async () => {
 // Buscar um pedido por ID
 exports.getOrderById = async (orderId) => {
   try {
-    return await getOrder.findById(orderId);
+    return await getOrder.byId(orderId);
   } catch (error) {
     throw new Error("Error fetching order");
   }
@@ -36,14 +36,7 @@ exports.getOrderById = async (orderId) => {
 // Atualizar um pedido
 exports.updateOrder = async (orderId, products, total) => {
   try {
-    const order = await updateOrder.one(
-      orderId,
-      {
-        products,
-        total,
-      },
-      { new: true }
-    );
+    const order = await updateOrder.one(orderId, products, total);
 
     return order;
   } catch (error) {
