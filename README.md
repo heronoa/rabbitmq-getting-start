@@ -93,4 +93,4 @@ O projeto está dividido nas seguintes pastas:
    - Após o processamento, o `order-service` envia uma atualização da ordem para a fila `product-service-queue`.
 
 4. **Atualização ao Cliente**:
-   - O `product-service` consome a fila `product-service-queue` para obter o status atualizado da ordem e enviar as informações de volta ao cliente.
+   - O `product-service` consome a fila `product-service-queue` para obter o status atualizado da ordem e atualizar a quantidade de produtos ainda em estoque.
