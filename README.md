@@ -4,14 +4,14 @@ Este é um projeto educacional que demonstra um caso de uso simples de integraç
 
 ## Visão Geral
 
-O `product-service` recebe pedidos de compra de um front-end e os envia para uma fila do RabbitMQ chamada `order-service-queue`. O `order-service` então consome essa fila, processa os pedidos e realiza diversas verificações, como o status do pagamento e o envio. Após o processamento, o `order-service` envia os detalhes da ordem para outra fila chamada `product-service-queue`. Finalmente, o `product-service` consome essa fila para retornar o status atualizado ao cliente.
+O `product-service` recebe pedidos de compra de um front-end e os envia para uma fila do RabbitMQ chamada `order-service-queue`. O `order-service` então consome essa fila, processa os pedidos e realiza diversas verificações, como o status do pagamento e o envio. Após o processamento, o `order-service` envia os detalhes da ordem para outra fila chamada `product-service-queue`. Finalmente, o `product-service` consome essa fila para atualizar a quantidade de produtos ainda em estoque.
 
 ## Estrutura do Projeto
 
 O projeto está dividido nas seguintes pastas:
 
 - **order-service**: Responsável por consumir a fila de pedidos, processar e atualizar o status da ordem, interagir com o banco de dados para salvar, modificar, deletar e atualizar as ordens.
-- **product-service**: Envia pedidos para a fila de pedidos e consome a fila de resposta para atualizar o cliente sobre o status.
+- **product-service**: Envia pedidos para a fila de pedidos e consome a fila de resposta para atualizar a quantidade de produtos ainda em estoque.
 
 ## Requisitos
 
