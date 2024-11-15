@@ -1,0 +1,28 @@
+{
+  "name": "order-service",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "npm run test && node src/index.js",
+    "dev": "nodemon src/index.js",
+    "test": "jest --testTimeout=30000 --setupFiles ./jest.setup.js --detectOpenHandles",
+    "test:integration": "jest ./tests/integration  --testTimeout=30000 --setupFiles ./jest.setup.js --detectOpenHandles"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "amqplib": "^0.10.4",
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.4.5",
+    "express": "^4.21.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.8.0"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0",
+    "nodemon": "^3.1.7",
+    "supertest": "^7.0.0"
+  }
+}
