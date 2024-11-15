@@ -7,23 +7,23 @@ const Order = require("../../src/domain/entities/Order");
 const Database = require("../../src/infrastructure/database");
 const RabbitMQClient = require("../../src/infrastructure/messaging/RabbitMQClient");
 
-const cleanProducts = (products) => {
-  const cleanedProducts = products.map((product) => {
-    const { _id, ...cleanedProduct } = product;
-    return cleanedProduct;
+const cleanOrders = (orders) => {
+  const cleanedOrders = orders.map((order) => {
+    const { _id, ...cleanedOrder } = order;
+    return cleanedOrder;
   });
 
-  return cleanedProducts;
+  return cleanedOrders;
 };
 
 const cleanOrder = (order) => {
-  const { _id, __v, createdAt, updatedAt, products, ...cleanedOrder } = order;
+  const { _id, __v, createdAt, updatedAt, orders, ...cleanedOrder } = order;
 
-  const cleanedProducts = cleanProducts(products);
+  const cleanedOrders = cleanOrders(orders);
 
   return {
     ...cleanedOrder,
-    products: cleanedProducts,
+    orders: cleanedOrders,
   };
 };
 
@@ -80,14 +80,14 @@ describe("Order Service - Integration Tests", () => {
     expect(response.body).toMatchObject({
       message: "Order created successfully",
       order: {
-        products: orderMocks[0].products,
+        orders: orderMocks[0].orders,
         total: orderMocks[0].total,
       },
     });
 
     const savedOrder = await Order.findById(response.body.order._id);
     expect(savedOrder).not.toBeNull();
-    expect(savedOrder?.products).toMatchObject(orderMocks[0].products);
+    expect(savedOrder?.orders).toMatchObject(orderMocks[0].orders);
     expect(savedOrder?.total).toBe(orderMocks[0].total);
   });
 
@@ -145,8 +145,8 @@ describe("Order Service - Integration Tests", () => {
     });
   });
 
-  it("should create a new order when a message is received from products queue", async () => {
-    // Envia uma mensagem para a fila products_queue
+  it("should create a new order when a message is received from orders queue", async () => {
+    // Envia uma mensagem para a fila orders_queue
     await RabbitMQClient.sendToQueue(
       process.env.ORDER_QUEUE_NAME,
       orderMocks[0]
@@ -160,14 +160,14 @@ describe("Order Service - Integration Tests", () => {
 
     expect(createdOrder).not.toBeNull();
 
-    const createdOrderProducts = createdOrder.products.map((product) =>
-      product.toObject()
+    const createdOrderOrders = createdOrder.orders.map((order) =>
+      order.toObject()
     );
 
-    expect(createdOrderProducts).toEqual(
+    expect(createdOrderOrders).toEqual(
       expect.arrayContaining([
-        expect.objectContaining(orderMocks[0].products[0]),
-        expect.objectContaining(orderMocks[0].products[0]),
+        expect.objectContaining(orderMocks[0].orders[0]),
+        expect.objectContaining(orderMocks[0].orders[0]),
       ])
     );
     expect(createdOrder.total).toBe(orderMocks[0].total);

@@ -3,10 +3,8 @@ require("dotenv").config();
 const express = require("express");
 const database = require("./infrastructure/database");
 const RabbitMQClient = require("./infrastructure/messaging/RabbitMQClient");
-const productConsumer = require("./infrastructure/messaging/ProductConsumer");
 const ErrorHandler = require("./adapters/presenters/middlewares/errorHandler");
-const productRoutes = require("./adapters/presenters/routes/ProductRoutes");
-
+const userRoutes = require("./adapters/presenters/routes/UserRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -14,7 +12,7 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(ErrorHandler.handleError);
-app.use("/products", productRoutes);
+app.use("/users", userRoutes);
 
 app.use("/", (req, res) => {
   res.status(200).json({ hello: "world" });
@@ -28,9 +26,6 @@ async function startServer() {
       process.env.RABBITMQ_URL || "amqp://localhost"
     );
 
-    await productConsumer.start();
-
-    // Inicia o servidor
     app.listen(PORT, () => {
       console.log(`Server is running on port ${PORT}`);
     });
