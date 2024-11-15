@@ -1,5 +1,5 @@
 const express = require("express");
-const userController = require("../../controllers/UserController"); // Controlador responsável pela lógica dos pedidos
+const userController = require("../../controllers/AdminController"); // Controlador responsável pela lógica dos pedidos
 
 const router = express.Router();
 

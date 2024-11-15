@@ -3,8 +3,10 @@ require("dotenv").config();
 const express = require("express");
 const database = require("./infrastructure/database");
 const RabbitMQClient = require("./infrastructure/messaging/RabbitMQClient");
-const ErrorHandler = require("./adapters/presenters/middlewares/errorHandler");
-const userRoutes = require("./adapters/presenters/routes/UserRoutes");
+const ErrorHandler = require("./adapters/presenters/middlewares/ErrorHandler");
+const AuthHandler = require("./adapters/presenters/middlewares/AuthHandler");
+const adminRoutes = require("./adapters/presenters/routes/AdminRoutes");
+const publicRoutes = require("./adapters/presenters/routes/PublicRoutes");
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -12,7 +14,10 @@ const PORT = process.env.PORT || 3000;
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(ErrorHandler.handleError);
-app.use("/users", userRoutes);
+
+app.use("/public", publicRoutes);
+
+app.use("/admin/users", AuthHandler.authorizeRole("admin"), adminRoutes);
 
 app.use("/", (req, res) => {
   res.status(200).json({ hello: "world" });

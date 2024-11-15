@@ -1,35 +1,32 @@
 const jwt = require("jsonwebtoken");
-const User = require("./models/User");
+
+const GetUser = require("../../../domain/use-cases/GetUser");
 
 class AuthHandler {
-  static async authorizeRole(requiredRole) {
+  static authorizeRole(requiredRole) {
     return async (req, res, next) => {
       const token = req.headers.authorization?.split(" ")[1];
 
       if (!token) {
-        return res.status(401).json({ error: "Token não fornecido." });
+        return res.status(401).json({ error: "Token Is Required" });
       }
 
       try {
-        // Verifica e decodifica o token
-        const decoded = jwt.verify(token, "your_secret_key");
+        const decoded = jwt.verify(token, process.env.JWT_SECRET);
 
-        // Verifica se o usuário ainda existe no banco de dados
-        const user = await User.findById(decoded.sub);
+        const user = await GetUser.byId(decoded.sub);
         if (!user) {
-          return res.status(404).json({ error: "Usuário não encontrado." });
+          return res.status(404).json({ error: "User Not Found." });
         }
 
-        // Verifica se o role do usuário no banco corresponde ao requerido
         if (user.role !== requiredRole) {
-          return res.status(403).json({ error: "Acesso negado." });
+          return res.status(403).json({ error: "Acess Denied." });
         }
 
-        // Armazena o usuário no request para uso posterior
         req.user = user;
-        next(); // Permite o acesso à rota
+        next();
       } catch (error) {
-        return res.status(401).json({ error: "Token inválido." });
+        return res.status(401).json({ error: "Invalid Token." });
       }
     };
   }

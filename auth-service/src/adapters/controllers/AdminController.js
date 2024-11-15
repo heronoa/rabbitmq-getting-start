@@ -1,58 +1,15 @@
-// controllers/userController.js
-const UserService = require("../../domain/services/UserServices"); // Camada de serviço para lógica de pedidos
+const UserService = require("../../domain/services/AdminServices");
 
-exports.login = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const data = await UserService.login(email, password);
-
-    if (!token) {
-      return res.status(401).json({
-        error: "Invalid credentials",
-      });
-    }
-
-    res.status(200).json({
-      ...data,
-    });
-  } catch (error) {
-    console.error("Error logging in user:", error);
-    res.status(500).json({
-      error: "Failed to login user",
-    });
-  }
-};
-
-exports.register = async (req, res) => {
-  try {
-    const { name, email, password, username } = req.body;
-    const newUser = await UserService.register({
-      name,
-      email,
-      password,
-      username,
-    });
-
-    res.status(201).json({
-      message: "User registered successfully",
-      user: newUser,
-    });
-  } catch (error) {
-    console.error("Error registering user:", error);
-    res.status(500).json({
-      error: "Failed to register user",
-    });
-  }
-};
 
 exports.createUser = async (req, res) => {
   try {
-    const { name, email, password, username } = req.body;
+    const { name, email, password, username, role } = req.body;
     const newUser = await UserService.createUser({
       name,
       email,
       password,
       username,
+      role,
     });
 
     res.status(201).json({

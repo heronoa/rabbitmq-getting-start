@@ -1,4 +1,3 @@
-// use-cases/GetUser.js
 const User = require("../entities/User");
 
 class GetUser {
@@ -19,6 +18,17 @@ class GetUser {
     }
 
     return users;
+  }
+
+  static async byEmail(email) {
+    const user = await User.findOne({ email });
+
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return user;
   }
 
   static async byId(userId) {

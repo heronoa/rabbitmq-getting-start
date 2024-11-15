@@ -1,12 +1,16 @@
+const jwt = require("jsonwebtoken");
+const dotenv = require("dotenv");
+
 const User = require("../entities/User");
 
+dotenv.config();
 class TokenGenerator {
   static async generate({ email }) {
     try {
       const user = await User.findOne({ email });
 
       if (!user) {
-        return { error: "Usuário não encontrado." };
+        return { error: "User Not Found" };
       }
 
       const payload = {
@@ -16,12 +20,16 @@ class TokenGenerator {
         role: user.role,
       };
 
-      const token = jwt.sign(payload, "your_secret_key", { expiresIn: "1h" });
+      const token = jwt.sign(payload, process.env.JWT_SECRET, {
+        expiresIn: "1h",
+      });
 
       return { token };
     } catch (error) {
       console.error(error);
-      return { error: "Erro ao gerar o token." };
+      return { error: "Error on token generator: " + error };
     }
   }
 }
+
+module.exports = TokenGenerator;

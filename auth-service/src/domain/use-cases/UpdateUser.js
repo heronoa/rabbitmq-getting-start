@@ -31,8 +31,6 @@ class UpdateUser {
       { new: true }
     );
 
-    console.log({ updatedUser });
-
     return updatedUser;
   }
 }
