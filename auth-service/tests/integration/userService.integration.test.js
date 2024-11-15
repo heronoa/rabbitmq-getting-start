@@ -1,7 +1,7 @@
 // tests/integration/userService.integration.test.ts
 const request = require("supertest");
 
-const userMocks = require("./userMocks");
+const { userMocks, adminMock } = require("./userMocks");
 const app = require("../../src/index");
 const User = require("../../src/domain/entities/User");
 const Database = require("../../src/infrastructure/database");
@@ -30,6 +30,7 @@ describe("User Service - Integration Tests", () => {
   });
   beforeEach(async () => {
     await User.deleteMany({});
+    await request(app).post("/public/register").send(adminMock).expect(201);
   });
 
   it("health check", async () => {
@@ -39,11 +40,21 @@ describe("User Service - Integration Tests", () => {
   it("should list all users", async () => {
     await User.create(userMocks);
 
-    const response = await request(app).get("/users").expect(200);
+    const loginResponse = await request(app)
+      .post("/public/login")
+      .send({ email: adminMock.email, password: adminMock.password })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+
+    const response = await request(app)
+      .get("/admin/users")
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
 
     const cleanedResponse = response.body.map((user) => cleanUser(user));
 
-    expect(cleanedResponse).toHaveLength(userMocks.length);
+    expect(cleanedResponse).toHaveLength([...userMocks, adminMock].length);
     expect(cleanedResponse).toEqual(
       expect.arrayContaining([
         expect.objectContaining(userMocks[0]),
@@ -53,8 +64,16 @@ describe("User Service - Integration Tests", () => {
   });
 
   it("should create an user successfully", async () => {
+    const loginResponse = await request(app)
+      .post("/public/login")
+      .send({ email: adminMock.email, password: adminMock.password })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+
     const response = await request(app)
-      .post("/users")
+      .post("/admin/users")
+      .set("Authorization", `Bearer ${token}`)
       .send(userMocks[1])
       .expect(201);
 
@@ -74,6 +93,13 @@ describe("User Service - Integration Tests", () => {
   });
 
   it("should update an user successfully", async () => {
+    const loginResponse = await request(app)
+      .post("/public/login")
+      .send({ email: adminMock.email, password: adminMock.password })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+
     const createdUser = await User.create(userMocks[0]);
 
     expect(createdUser).not.toBeNull();
@@ -83,7 +109,8 @@ describe("User Service - Integration Tests", () => {
     expect(cleanUser(updatingUser)).toEqual({ ...userMocks[0], role: "user" });
 
     const response = await request(app)
-      .patch(`/users/${updatingUser._id}`)
+      .patch(`/admin/users/${updatingUser._id}`)
+      .set("Authorization", `Bearer ${token}`)
       .send({
         role: "admin",
       });
@@ -96,9 +123,10 @@ describe("User Service - Integration Tests", () => {
       role: "admin",
     });
 
-    const getUpdatedResponse = await request(app).get(
-      `/users/${updatedUser._id}`
-    );
+    const getUpdatedResponse = await request(app)
+      .get(`/admin/users/${updatedUser._id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
 
     const fetchUpdatedUser = getUpdatedResponse.body;
 
@@ -112,16 +140,32 @@ describe("User Service - Integration Tests", () => {
 
   it("should delete an user successfully", async () => {
     await User.create(userMocks[0]);
-    const response = await request(app).get("/users").expect(200);
-    const firstUser = response.body[0];
+    const loginResponse = await request(app)
+      .post("/public/login")
+      .send({ email: adminMock.email, password: adminMock.password })
+      .expect(200);
 
-    expect(firstUser).not.toBeNull();
+    const token = loginResponse.body.token;
 
-    await request(app).delete(`/users/${firstUser._id}`);
+    const response = await request(app)
+      .get("/admin/users")
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+    const firstNoAdminUser = response.body[1];
 
-    const deleteResponse = await request(app).get(`/users/${firstUser._id}`);
+    expect(firstNoAdminUser).not.toBeNull();
 
-    const deletedUser = deleteResponse.body;
+    await request(app)
+      .delete(`/admin/users/${firstNoAdminUser._id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(200);
+
+    const deleteErrorResponse = await request(app)
+      .get(`/admin/users/${firstNoAdminUser._id}`)
+      .set("Authorization", `Bearer ${token}`)
+      .expect(500);
+
+    const deletedUser = deleteErrorResponse.body;
 
     expect(deletedUser).toEqual({
       error: "Failed to fetch user",
@@ -133,7 +177,15 @@ describe("User Service - Integration Tests", () => {
 
     expect(createdUser).not.toBeNull();
 
-    const response = await request(app).get(`/users/${createdUser._id}`);
+    const loginResponse = await request(app)
+      .post("/public/login")
+      .send({ email: adminMock.email, password: adminMock.password })
+      .expect(200);
+
+    const token = loginResponse.body.token;
+    const response = await request(app)
+      .get(`/admin/users/${createdUser._id}`)
+      .set("Authorization", `Bearer ${token}`);
 
     const fetchedUser = response.body;
 

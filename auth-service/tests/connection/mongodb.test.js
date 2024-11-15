@@ -1,8 +1,7 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv");
 
 const User = require("../../src/domain/entities/User");
-const userMocks = require("../integration/userMocks");
+const { userMocks } = require("../integration/userMocks");
 
 beforeAll(async () => {
   await mongoose
@@ -23,7 +22,7 @@ afterAll(async () => {
 
 describe("MongoDB Integration Test - User Model", () => {
   it("should add a user and return it back with a id", async () => {
-    const newUser = await User(userMocks[0]);
+    const newUser = new User(userMocks[0]);
 
     await newUser.save();
 
@@ -40,7 +39,6 @@ describe("MongoDB Integration Test - User Model", () => {
 
     expect(user).toHaveProperty("id");
   });
-
 
   it("should delete a user", async () => {
     const users = await User.find();

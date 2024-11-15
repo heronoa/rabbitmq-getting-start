@@ -1,4 +1,4 @@
-const usersMocks = [
+const userMocks = [
   {
     name: "User 1",
     email: "test@example.com",
@@ -21,4 +21,12 @@ const usersMocks = [
   },
 ];
 
-module.exports = usersMocks;
+const adminMock = {
+  "name": "joe mano admin",
+  "email": "admin1@example.com",
+  "password": "senha123",
+  "username": "testadmin",
+  "role": "admin"
+}
+
+module.exports = {userMocks, adminMock};
