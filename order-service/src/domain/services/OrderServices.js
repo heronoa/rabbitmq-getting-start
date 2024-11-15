@@ -1,10 +1,8 @@
-// services/orderService.js
 const createOrder = require("../use-cases/CreateOrder");
 const getOrder = require("../use-cases/GetOrder");
 const deleteOrder = require("../use-cases/DeleteOrder");
 const updateOrder = require("../use-cases/UpdateOrder");
 
-// Criar um novo pedido
 exports.createOrder = async (products, total) => {
   try {
     const newOrder = await createOrder.execute(products, total);
@@ -15,7 +13,6 @@ exports.createOrder = async (products, total) => {
   }
 };
 
-// Listar todos os pedidos
 exports.getOrders = async () => {
   try {
     return await getOrder.all();
@@ -24,7 +21,6 @@ exports.getOrders = async () => {
   }
 };
 
-// Buscar um pedido por ID
 exports.getOrderById = async (orderId) => {
   try {
     return await getOrder.byId(orderId);
@@ -33,7 +29,6 @@ exports.getOrderById = async (orderId) => {
   }
 };
 
-// Atualizar um pedido
 exports.updateOrder = async (orderId, products, total) => {
   try {
     const order = await updateOrder.one(orderId, products, total);
