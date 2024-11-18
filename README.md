@@ -10,14 +10,16 @@ O `product-service` recebe pedidos de compra de um front-end e os envia para uma
 
 O projeto está dividido nas seguintes pastas:
 
-- **order-service**: Responsável por consumir a fila de pedidos, processar e atualizar o status da ordem, interagir com o banco de dados para salvar, modificar, deletar e atualizar as ordens.
+- **order-service**: Responsável por consumir a fila de pedidos, processar e atualizar o status da ordem, interagir com o banco de dados para salvar, modificar, deletar e atualizar as ordens. No momento esse serviço recebe notificação através do Rabbit para criar um novo pedido através da rota /buy do product service, após o pedido ter sido criado e finalizado, e manda uma mensagem pro product service atualizar o estoque
 - **product-service**: Envia pedidos para a fila de pedidos e consome a fila de resposta para atualizar a quantidade de produtos ainda em estoque.
+- **auth-service**: Cria usuarios e verifica permissões em dois papéis: *admin* e *user*, enquanto o admin tem poderes de alteração o user só pode atualizar suas próprias informações, esse serviços será responsável de autorizar o uso dos outros serviços (Em desenvolvimento)
 
 ## Requisitos
 
 - Node.js (versão 14 ou superior)
 - RabbitMQ
 - Banco de dados (MongoDB ou outro de sua escolha)
+- Docker
 
 ## Instalação
 
